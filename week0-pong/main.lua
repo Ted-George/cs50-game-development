@@ -9,6 +9,7 @@ PADDLE_SPEED = 200
 
 push = require 'push'
 
+WINNING_SCORE = 2
 
 
 
@@ -51,7 +52,7 @@ function love.keypressed(key)
         if gameState == 'start' then
             gameState = 'play'
         else
-            gameState = 'start'
+            gameState = 'start'or 'done'
             ballX = VIRTUAL_WIDTH / 2 - 2
             ballY = VIRTUAL_HEIGHT / 2 - 2
             ballDX = math.random(2) == 1 and 60 or -60
@@ -114,6 +115,11 @@ function love.update(dt)
             ballY = VIRTUAL_HEIGHT / 2 - 2
             ballDX = math.random(2) == 1 and 100 or -100
             ballDY = math.random(-50, 50)
+            if player2Score >= WINNING_SCORE then
+                gameState = 'done'
+                player1Score = 0
+                player2Score = 0
+            end
         end
 
         if ballX > VIRTUAL_WIDTH then
@@ -123,6 +129,11 @@ function love.update(dt)
             ballY = VIRTUAL_HEIGHT / 2 - 2
             ballDX = math.random(2) == 1 and 100 or -100
             ballDY = math.random(-50, 50)
+            if player1Score >= WINNING_SCORE then
+                gameState = 'done'
+                player1Score = 0
+                player2Score = 0
+            end
         end
     end
 end
@@ -130,7 +141,28 @@ end
 
 function love.draw()
     push:apply('start')
-    love.graphics.clear(40/255, 45/255, 52/255, 1)
+    love.graphics.clear(40/255, 45/255, 52/255, 255/255)
+        
+    if gameState =='start' then
+    love.graphics.setFont(smallfont)
+    love.graphics.setColor(212/255, 175/255, 55/255, 1)
+    love.graphics.printf('Hello Pong!', 0, 20, VIRTUAL_WIDTH, 'center')
+    love.graphics.printf('Press Enter to Play!', 0, 32, VIRTUAL_WIDTH, 'center')
+    love.graphics.printf('TEGANJO STUDIOS', 0, VIRTUAL_HEIGHT - 20, VIRTUAL_WIDTH, 'center')
+    love.graphics.setColor(1, 1, 1, 1)
+    end
+    if gameState == 'done' then
+        love.graphics.setFont(smallfont)
+        love.graphics.setColor(212/255, 175/255, 55/255, 1)
+        if player1Score >= WINNING_SCORE then
+            love.graphics.printf('Player 1 Wins!', 0, 20, VIRTUAL_WIDTH, 'center')
+        else
+            love.graphics.printf('Player 2 Wins!', 0, 20, VIRTUAL_WIDTH, 'center')
+        end
+        love.graphics.printf('Press Enter to Restart!', 0, 32, VIRTUAL_WIDTH, 'center')
+        love.graphics.printf('TEGANJO STUDIOS', 0, VIRTUAL_HEIGHT - 20, VIRTUAL_WIDTH, 'center')
+        love.graphics.setColor(1, 1, 1, 1)
+    end
     love.graphics.setFont(largefont)
     love.graphics.print(tostring(player1Score),VIRTUAL_WIDTH / 2 - 50,  VIRTUAL_HEIGHT / 2 - 80)
     love.graphics.print(tostring(player2Score),VIRTUAL_WIDTH / 2 + 30,  VIRTUAL_HEIGHT / 2 - 80)
